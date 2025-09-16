@@ -2,57 +2,52 @@
 - name: Create filesystems
   community.general.filesystem:
     fstype: ext4
-    dev: "{{ item.device }}"
-    opts: -L "{{ item.label }}"
-  loop:
-    - { device: '/dev/nvme1n1', label: 'glpi-config' }
-    - { device: '/dev/nvme2n1', label: 'glpi-data' }
-    - { device: '/dev/nvme3n1', label: 'glpi-logs' }
+    dev: "{{ glpi_volume.device }}"
+    opts: -L "{{ glpi_volume.label }}"
+  loop: "{{ glpi_volumes }}"
+  loop_control:
+    loop_var: glpi_volume
 
 - name: Create mount points for volumes
   ansible.builtin.file:
-    path: "{{ item }}"
+    path: "{{ glpi_volume_mount_point }}"
     state: directory
     mode: '0755'
-  loop:
-    - /mnt/glpi-config
-    - /mnt/glpi-data
-    - /mnt/glpi-logs
+  loop: "{{ glpi_volumes | map(attribute='mount_point') | list }}"
+  loop_control:
+    loop_var: glpi_volume_mount_point
 
 - name: Mount filesystems to directories
   ansible.posix.mount:
-    path: "{{ item.path }}"
-    src: "{{ item.src }}"
+    path: "{{ glpi_volume.mount_point }}"
+    src: "{{ glpi_volume.dir }}"
     fstype: ext4
     dump: '0'
     passno: '2'
     opts: "defaults,nofail"
     state: mounted
-  loop:
-    - { path: '/mnt/glpi-config', src: '/dev/nvme1n1' }
-    - { path: '/mnt/glpi-data', src: '/dev/nvme2n1' }
-    - { path: '/mnt/glpi-logs', src: '/dev/nvme3n1' }
+  loop: "{{ glpi_volumes }}"
+  loop_control:
+    loop_var: glpi_volume
 
 - name: Set ownership for volumes
   ansible.builtin.file:
-    path: "{{ item }}"
+    path: "{{ glpi_volume_mount_point }}"
     owner: www-data
     group: www-data
     recurse: true
     mode: '0755'
-  loop:
-    - /mnt/glpi-config
-    - /mnt/glpi-data
-    - /mnt/glpi-logs
+  loop: "{{ glpi_volumes | map(attribute='mount_point') | list }}"
+  loop_control:
+    loop_var: glpi_volume_mount_point
 
 - name: Create directories as symlinks to volumes
   ansible.builtin.file:
-    src: "{{ item.src }}"
-    dest: "{{ item.dest }}"
+    src: "{{ glpi_volume.mount_point }}"
+    dest: "{{ glpi_volume.dir }}"
     state: link
     owner: www-data
     group: www-data
-  loop:
-    - { src: '/mnt/glpi-config', dest: '/etc/glpi' }
-    - { src: '/mnt/glpi-data', dest: '/var/lib/glpi' }
-    - { src: '/mnt/glpi-logs', dest: '/var/log/glpi' }
+  loop: "{{ glpi_volumes }}"
+  loop_control:
+    loop_var: glpi_volume

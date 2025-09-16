@@ -36,3 +36,17 @@ glpi_required_packages:
   - libapache2-mod-php
   - php-soap
   - php-cas
+
+glpi_volumes:
+  - device: /dev/nvme1n1
+    label: glpi-config
+    mount_point: /mnt/glpi-config
+    dir: /etc/glpi
+  - device: /dev/nvme2n1
+    label: glpi-data
+    mount_point: /mnt/glpi-data
+    dir: /var/lib/glpi
+  - device: /dev/nvme3n1
+    label: glpi-logs
+    mount_point: /mnt/glpi-logs
+    dir: /var/log/glpi
