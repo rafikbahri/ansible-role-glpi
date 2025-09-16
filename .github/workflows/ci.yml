@@ -6,17 +6,21 @@ on:
       - main
   pull_request:
 jobs:
-  ci:
-    runs-on: ubuntu-22.04 # required for act - fixes https://github.com/nektos/act/issues/107 and other act dependencies (curl, git..)
+  ansible-lint:
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-
       - name: Ansible Lint
         uses: ansible/ansible-lint@main
         with:
           args: -c .ansible-lint.yml
 
+  markdown-lint:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
       - name: Markdown lint
         uses: DavidAnson/markdownlint-cli2-action@v20
         with:
