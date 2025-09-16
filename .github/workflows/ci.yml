@@ -3,7 +3,7 @@ run-name: CI
 on: [push, pull_request]
 jobs:
   ci:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04 # required for act - fixes https://github.com/nektos/act/issues/107 and other act dependencies (curl, git..)
     steps:
       - name: Checkout code
         uses: actions/checkout@v2

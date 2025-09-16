@@ -1,4 +1,3 @@
-
 - name: Ensure GLPI is not already installed - URL check
   ansible.builtin.uri:
     url: "{{ glpi_url }}"
@@ -9,17 +8,18 @@
 
 - name: Assert GLPI is not already installed
   ansible.builtin.debug:
-    msg: 
+    msg:
       - "GLPI is already installed on {{ glpi_url }}."
       - "If you want to upgrade or reconfigure GLPI, please use the appropriate playbooks."
       - "Aborting installation."
   when: _glpi_install_check.status == 200
 
 - name: Install GLPI
+  when: _glpi_install_check.status != 200
   block:
     - name: Confirm database override
       ansible.builtin.pause:
-        prompt: "This install task is meant to run for primo-installs, as it will erase all existing GLPI database data. Do you want to continue with the installation? (yes/no)"
+        prompt: "This install task is meant to run for primo-installs, as it will erase all GLPI data. Do you want to continue with the installation? (yes/no)"
       register: _glpi_install_confirm
 
     - name: Install using CLI
@@ -40,4 +40,3 @@
       register: _glpi_install_result
       when:
         - _glpi_install_confirm.user_input | lower == 'yes'
-  when: _glpi_install_check.status != 200
