@@ -1,6 +1,10 @@
 name: CI
 run-name: CI
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - main
+  pull_request:
 jobs:
   ci:
     runs-on: ubuntu-22.04 # required for act - fixes https://github.com/nektos/act/issues/107 and other act dependencies (curl, git..)
