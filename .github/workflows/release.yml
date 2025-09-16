@@ -28,8 +28,6 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-      packages: write
-      id-token: write
     needs:
       - tag
     steps:
@@ -49,6 +47,19 @@ jobs:
             CHANGELOG.md
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  ansible-galaxy-import:
+    runs-on: ubuntu-latest
+    needs: release
+    permissions:
+      contents: read
+    steps:
+      - name: Fail if ANSIBLE_GALAXY_TOKEN is not set
+        run: |
+          if [ -z "${{ secrets.ANSIBLE_GALAXY_TOKEN }}" ]; then
+            echo "ANSIBLE_GALAXY_TOKEN secret is not set."
+            exit 1
+          fi
 
       - name: Set up Python
         uses: actions/setup-python@v5
