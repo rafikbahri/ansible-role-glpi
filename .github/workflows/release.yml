@@ -6,8 +6,12 @@ on:
       - main
 
 jobs:
-  tag:
+  release:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+      id-token: write
     outputs:
       new_tag: ${{ steps.tag_version.outputs.new_tag }}
       new_version: ${{ steps.tag_version.outputs.new_version }}
@@ -22,19 +26,6 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           release_branches: "main,master"
-
-  release:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      packages: write
-      id-token: write
-    needs:
-      - tag
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
