@@ -1,7 +1,7 @@
 GLPI
 ====
 
-[![CI](https://github.com/rafikbahri/ansible-role-glpi/actions/workflows/ci.yml/badge.svg)](https://github.com/rafikbahri/ansible-role-glpi/actions/workflows/ci.yml) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![CI](https://github.com/rafikbahri/ansible-role-glpi/actions/workflows/ci.yml/badge.svg)](https://github.com/rafikbahri/ansible-role-glpi/actions/workflows/ci.yml) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE) [![Ansible Galaxy](https://img.shields.io/badge/galaxy-rafikbahri.glpi-blue?style=flat-square&logo=ansible)](https://galaxy.ansible.com/rafikbahri/glpi)
 
 A role to install and configure a GLPI server.
 
