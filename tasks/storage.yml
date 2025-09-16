@@ -1,0 +1,53 @@
+---
+- name: Create filesystems
+  community.general.filesystem:
+    fstype: ext4
+    dev: "{{ glpi_volume.device }}"
+    opts: -L "{{ glpi_volume.label }}"
+  loop: "{{ glpi_volumes }}"
+  loop_control:
+    loop_var: glpi_volume
+
+- name: Create mount points for volumes
+  ansible.builtin.file:
+    path: "{{ glpi_volume_mount_point }}"
+    state: directory
+    mode: '0755'
+  loop: "{{ glpi_volumes | map(attribute='mount_point') | list }}"
+  loop_control:
+    loop_var: glpi_volume_mount_point
+
+- name: Mount filesystems to directories
+  ansible.posix.mount:
+    path: "{{ glpi_volume.mount_point }}"
+    src: "{{ glpi_volume.dir }}"
+    fstype: ext4
+    dump: '0'
+    passno: '2'
+    opts: "defaults,nofail"
+    state: mounted
+  loop: "{{ glpi_volumes }}"
+  loop_control:
+    loop_var: glpi_volume
+
+- name: Set ownership for volumes
+  ansible.builtin.file:
+    path: "{{ glpi_volume_mount_point }}"
+    owner: www-data
+    group: www-data
+    recurse: false
+    mode: '0755'
+  loop: "{{ glpi_volumes | map(attribute='mount_point') | list }}"
+  loop_control:
+    loop_var: glpi_volume_mount_point
+
+- name: Create directories as symlinks to volumes
+  ansible.builtin.file:
+    src: "{{ glpi_volume.mount_point }}"
+    dest: "{{ glpi_volume.dir }}"
+    state: link
+    owner: www-data
+    group: www-data
+  loop: "{{ glpi_volumes }}"
+  loop_control:
+    loop_var: glpi_volume

@@ -1,0 +1,6 @@
+---
+- name: Test playbook for GLPI role
+  hosts: localhost
+  remote_user: root
+  roles:
+    - rafikbahri.glpi
