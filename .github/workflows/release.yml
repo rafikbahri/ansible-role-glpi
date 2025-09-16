@@ -1,0 +1,50 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  tag:
+    runs-on: ubuntu-latest
+    outputs:
+      new_tag: ${{ steps.tag_version.outputs.new_tag }}
+      new_version: ${{ steps.tag_version.outputs.new_version }}
+      changelog: ${{ steps.tag_version.outputs.changelog }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Create Tag
+        id: tag_version
+        uses: mathieudutour/github-tag-action@v6.2
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          release_branches: "main"
+
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+      id-token: write
+    needs:
+      - tag
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ needs.tag.outputs.new_tag }}
+          name: Release v${{ needs.tag.outputs.new_version }}
+          body: ${{ needs.tag.outputs.changelog }}
+          draft: false
+          prerelease: false
+          files: |
+            ${{ env.PACKAGE }}
+            CHANGELOG.md
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

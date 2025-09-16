@@ -1,12 +1,14 @@
 GLPI
 ====
 
+[![CI](https://github.com/rafikbahri/ansible-role-glpi/actions/workflows/ci.yml/badge.svg)](https://github.com/rafikbahri/ansible-role-glpi/actions/workflows/ci.yml)
+
 A role to install and configure a GLPI server.
 
 Requirements
 ------------
 
-MySQL or MariaDB database.
+MySQL or MariaDB database.  
 Check Role Variables section to configure database connection.
 
 Role Variables
@@ -20,7 +22,7 @@ Here are the relevant variables you might want to override:
 ---
 glpi_version: "10.0.19"
 glpi_domain: glpi.example.com
-glpi_db_host: localhost
+glpi_db_host: db.glpi.example.com
 glpi_db_name: glpi
 glpi_db_user: glpi
 glpi_db_port: 3306
@@ -53,7 +55,7 @@ Example Playbook
 ```yaml
 - hosts: servers
   roles:
-    - { role: rafikbahri.glpi }
+    - role: rafikbahri.glpi
 ```
 
 License
