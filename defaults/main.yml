@@ -1,12 +1,13 @@
 ---
 glpi_version: "10.0.19"
 glpi_domain: localhost
+glpi_url: "https://{{ glpi_domain }}"
 glpi_db_host: localhost
 glpi_db_name: glpi
 glpi_db_user: glpi
 glpi_db_port: 3306
 glpi_db_password: glpi
-glpi_timzone: Europe/Paris
+glpi_timezone: Europe/Paris
 glpi_upload_max_filesize: "20M"
 glpi_post_max_size: "20M"
 glpi_max_execution_time: 60
@@ -36,7 +37,6 @@ glpi_required_packages:
   - libapache2-mod-php
   - php-soap
   - php-cas
-
 glpi_volumes:
   - device: /dev/nvme1n1
     label: glpi-config

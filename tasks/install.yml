@@ -1,22 +1,42 @@
----
-- name: Install using CLI
-  become: true
-  ansible.builtin.command: |
-    bin/console db:install --no-interaction \
-    --db-host={{ glpi_db_host }} \
-    --db-name={{ glpi_db_name }} \
-    --db-user={{ glpi_db_user }} \
-    --db-password={{ glpi_db_password }} \
-    --db-port={{ glpi_db_port }} \
-    --reconfigure \
-    --force \
-    --no-telemetry
-  args:
-    chdir: /var/www/html/glpi
-  changed_when: false
-  register: glpi_install_result
+- name: Ensure GLPI is not already installed - URL check
+  ansible.builtin.uri:
+    url: "{{ glpi_url }}"
+    status_code: 200
+    validate_certs: false
+  register: _glpi_install_check
+  failed_when: false
 
-- name: Check installation result
+- name: Assert GLPI is not already installed
   ansible.builtin.debug:
-    msg: "GLPI installation completed successfully."
-  when: glpi_install_result.rc == 0
+    msg:
+      - "GLPI is already installed on {{ glpi_url }}."
+      - "If you want to upgrade or reconfigure GLPI, please use the appropriate playbooks."
+      - "Aborting installation."
+  when: _glpi_install_check.status == 200
+
+- name: Install GLPI
+  when: _glpi_install_check.status != 200
+  block:
+    - name: Confirm database override
+      ansible.builtin.pause:
+        prompt: "This install task is meant to run for primo-installs, as it will erase all GLPI data. Do you want to continue with the installation? (yes/no)"
+      register: _glpi_install_confirm
+
+    - name: Install using CLI
+      become: true
+      ansible.builtin.command: |
+        bin/console db:install --no-interaction \
+        --db-host={{ glpi_db_host }} \
+        --db-name={{ glpi_db_name }} \
+        --db-user={{ glpi_db_user }} \
+        --db-password={{ glpi_db_password }} \
+        --db-port={{ glpi_db_port }} \
+        --reconfigure \
+        --force \
+        --no-telemetry
+      args:
+        chdir: /var/www/html/glpi
+      changed_when: false
+      register: _glpi_install_result
+      when:
+        - _glpi_install_confirm.user_input | lower == 'yes'
