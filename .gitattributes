@@ -1,0 +1,7 @@
+.actrc export-ignore
+.github/workflows/* export-ignore
+.vscode/* export-ignore
+tests/* export-ignore
+.markdownlint.json export-ignore
+.gitattributes export-ignore
+.gitignore export-ignore
