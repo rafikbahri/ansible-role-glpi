@@ -2,6 +2,7 @@
   ansible.builtin.uri:
     url: "{{ glpi_url }}"
     status_code: 200
+    return_content: true
     validate_certs: false
   register: _glpi_install_check
   failed_when: false
@@ -12,10 +13,10 @@
       - "GLPI is already installed on {{ glpi_url }}."
       - "If you want to upgrade or reconfigure GLPI, please use the appropriate playbooks."
       - "Aborting installation."
-  when: _glpi_install_check.status == 200
+  when: _glpi_install_check.status == 200 and _glpi_install_check.content | lower == "login"
 
 - name: Install GLPI
-  when: _glpi_install_check.status != 200
+  when: _glpi_install_check.status != 200 or not _glpi_install_check.content | lower == "login"
   block:
     - name: Confirm database override
       ansible.builtin.pause:
