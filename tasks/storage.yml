@@ -1,5 +1,6 @@
 ---
 - name: Create filesystems
+  become: true
   community.general.filesystem:
     fstype: ext4
     dev: "{{ glpi_volume.device }}"
@@ -9,6 +10,7 @@
     loop_var: glpi_volume
 
 - name: Create mount points for volumes
+  become: true
   ansible.builtin.file:
     path: "{{ glpi_volume_mount_point }}"
     state: directory
@@ -18,6 +20,7 @@
     loop_var: glpi_volume_mount_point
 
 - name: Mount filesystems to directories
+  become: true
   ansible.posix.mount:
     path: "{{ glpi_volume.mount_point }}"
     src: "{{ glpi_volume.dir }}"
@@ -31,6 +34,7 @@
     loop_var: glpi_volume
 
 - name: Set ownership for volumes
+  become: true
   ansible.builtin.file:
     path: "{{ glpi_volume_mount_point }}"
     owner: www-data
@@ -42,6 +46,7 @@
     loop_var: glpi_volume_mount_point
 
 - name: Create directories as symlinks to volumes
+  become: true
   ansible.builtin.file:
     src: "{{ glpi_volume.mount_point }}"
     dest: "{{ glpi_volume.dir }}"
