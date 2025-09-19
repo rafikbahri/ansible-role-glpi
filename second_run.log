@@ -1,0 +1,13 @@
+
+PLAY [Test on Ubuntu 22.04] ****************************************************
+
+TASK [../../ansible-role-glpi : Install requirements] **************************
+included: /Users/rbahri/Desktop/all/Perso/projects/ansible-role-glpi/tasks/requirements.yml for localhost
+
+TASK [../../ansible-role-glpi : Update cache] **********************************
+ok: [localhost]
+
+TASK [../../ansible-role-glpi : Upgrade packages] ******************************
+ok: [localhost]
+
+TASK [../../ansible-role-glpi : Install required packages] *********************

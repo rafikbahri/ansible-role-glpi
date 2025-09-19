@@ -1,0 +1,1 @@
+localhost ansible_connection=ssh ansible_host=127.0.0.1 ansible_port=2222 ansible_user=ubuntu ansible_ssh_common_args='-i tests/id_ed25519_gh-actions -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null' ansible_python_interpreter=/usr/bin/python3.10

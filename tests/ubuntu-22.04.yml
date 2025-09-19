@@ -1,0 +1,8 @@
+---
+- name: Test on Ubuntu 22.04
+  hosts: localhost
+  gather_facts: false
+  vars:
+    glpi_ci_skip_storage: true
+  roles:
+    - role: ../../ansible-role-glpi
