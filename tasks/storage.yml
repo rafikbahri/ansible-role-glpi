@@ -23,10 +23,10 @@
   become: true
   ansible.posix.mount:
     path: "{{ glpi_volume.mount_point }}"
-    src: "{{ glpi_volume.dir }}"
+    src: "{{ glpi_volume.device }}"
     fstype: ext4
-    dump: '0'
-    passno: '2'
+    dump: "0"
+    passno: "2"
     opts: "defaults,nofail"
     state: mounted
   loop: "{{ glpi_volumes }}"
