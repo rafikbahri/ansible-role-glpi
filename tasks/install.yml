@@ -12,11 +12,6 @@
 - name: Install GLPI
   when: _glpi_install_check.rc != 0
   block:
-    - name: Confirm installation
-      ansible.builtin.pause:
-        prompt: "This install task is meant to run for primo-installs, as it will erase all GLPI data. Do you want to continue with the installation? (yes/no)"
-      register: _glpi_install_confirm
-
     - name: Install using CLI
       become: true
       ansible.builtin.command: |
@@ -33,8 +28,6 @@
         chdir: /var/www/html/glpi
       changed_when: false
       register: _glpi_install_result
-      when:
-        - _glpi_install_confirm.user_input | lower == 'yes'
 
     - name: Check GLPI liveness
       ansible.builtin.uri:

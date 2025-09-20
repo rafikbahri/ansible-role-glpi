@@ -1,8 +1,8 @@
 ---
 glpi_version: "10.0.19"
 glpi_domain: localhost
-glpi_url: "https://{{ glpi_domain }}"
-glpi_db_host: localhost
+glpi_url: "http://{{ glpi_domain }}"
+glpi_db_host: 127.0.0.1
 glpi_db_name: glpi
 glpi_db_user: glpi
 glpi_db_port: 3306

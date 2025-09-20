@@ -3,6 +3,7 @@
   ansible.builtin.include_tasks: requirements.yml
 
 - name: Configure storage
+  when: not glpi_ci_skip_storage | default(false)
   ansible.builtin.include_tasks: storage.yml
 
 - name: Configure server
