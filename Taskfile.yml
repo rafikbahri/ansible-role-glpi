@@ -1,0 +1,25 @@
+version: '3'
+
+tasks:
+  lint:
+    desc: Run the linters
+    cmds:
+      - ansible-lint
+      - markdownlint **/*.md
+
+  test:
+    desc: Run the tests locally
+    deps:
+      - compose-up
+    cmds:
+      - ansible-playbook --timeout=300 -i tests/inventory tests/ubuntu-22.04.yml
+
+  compose-up:
+    desc: Start the Docker services using Compose
+    cmds:
+      - docker compose -f tests/docker-compose.yml up --build -d
+
+  compose-down:
+    desc: Stop the Docker services using Compose and remove volumes
+    cmds:
+      - docker compose -f tests/docker-compose.yml down -v

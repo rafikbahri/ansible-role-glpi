@@ -1,0 +1,9 @@
+services:
+  glpi-test:
+    build:
+      context: .
+      dockerfile: Dockerfile.ubuntu-22-04
+    container_name: glpi-test
+    ports:
+      - "2222:22"
+    restart: unless-stopped

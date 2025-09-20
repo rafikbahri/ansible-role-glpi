@@ -1,0 +1,16 @@
+---
+- name: Test on Ubuntu 22.04
+  hosts: localhost
+  gather_facts: false
+  vars:
+    glpi_ci_skip_storage: true
+  pre_tasks:
+    - name: Wait for SSH to become available
+      ansible.builtin.wait_for_connection:
+        delay: 2
+        timeout: 60
+        sleep: 3
+        connect_timeout: 5
+      retries: 10
+  roles:
+    - role: ../../ansible-role-glpi
