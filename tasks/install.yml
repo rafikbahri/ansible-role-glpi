@@ -9,33 +9,30 @@
   failed_when: false
   changed_when: false
 
-- name: Install GLPI
+- name: Install using CLI
+  become: true
+  ansible.builtin.command: |
+    su www-data -s /bin/bash -c "bin/console db:install --no-interaction \
+      --db-host={{ glpi_db_host }} \
+      --db-name={{ glpi_db_name }} \
+      --db-user={{ glpi_db_user }} \
+      --db-password={{ glpi_db_password }} \
+      --db-port={{ glpi_db_port }} \
+      --reconfigure \
+      --force \
+      --no-telemetry"
+  args:
+    chdir: /var/www/html/glpi
+  changed_when: false
   when: _glpi_install_check.rc != 0
-  block:
-    - name: Install using CLI
-      become: true
-      ansible.builtin.command: |
-        su www-data -s /bin/bash -c "bin/console db:install --no-interaction \
-          --db-host={{ glpi_db_host }} \
-          --db-name={{ glpi_db_name }} \
-          --db-user={{ glpi_db_user }} \
-          --db-password={{ glpi_db_password }} \
-          --db-port={{ glpi_db_port }} \
-          --reconfigure \
-          --force \
-          --no-telemetry"
-      args:
-        chdir: /var/www/html/glpi
-      changed_when: false
-      register: _glpi_install_result
 
-    - name: Check GLPI liveness
-      ansible.builtin.uri:
-        url: "{{ glpi_url }}"
-        return_content: true
-        status_code: 200
-        validate_certs: false
-      register: _glpi_post_install_check
-      retries: 5
-      delay: 10
-      until: _glpi_post_install_check.status == 200 and "Login" in _glpi_post_install_check.content
+- name: Check GLPI liveness
+  ansible.builtin.uri:
+    url: "{{ glpi_url }}"
+    return_content: true
+    status_code: 200
+    validate_certs: false
+  register: _glpi_post_install_check
+  retries: 5
+  delay: 10
+  until: _glpi_post_install_check.status == 200 and "Login" in _glpi_post_install_check.content
