@@ -51,6 +51,10 @@ jobs:
         with:
           ssh-private-key: "${{ secrets.ANSIBLE_CI_SSH_PRIVATE_KEY }}"
 
-      - name: Run Ansible tests
+      - name: Run Ansible tests - Install scenario
         run: |
           ansible-playbook -i tests/inventory tests/ubuntu-22.04.yml
+
+      - name: Run Ansible tests - Upgrade scenario
+        run: |
+          ansible-playbook -i tests/inventory tests/ubuntu-22.04.yml --extra-vars "glpi_version=10.0.20"
