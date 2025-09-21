@@ -19,7 +19,6 @@
       --db-password={{ glpi_db_password }} \
       --db-port={{ glpi_db_port }} \
       --reconfigure \
-      --force \
       --no-telemetry"
   args:
     chdir: /var/www/html/glpi
