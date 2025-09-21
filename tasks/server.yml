@@ -4,6 +4,7 @@
     url: "https://github.com/glpi-project/glpi/releases/download/{{ glpi_version }}/glpi-{{ glpi_version }}.tgz"
     dest: "/tmp/glpi-{{ glpi_version }}.tgz"
     mode: '0644'
+  register: _glpi_download
 
 - name: Check if GLPI is installed - Directory check
   ansible.builtin.stat:
@@ -24,3 +25,7 @@
 - name: Install
   ansible.builtin.include_tasks: install.yml
   when: not _glpi_dir_check.stat.exists
+
+- name: Upgrade
+  ansible.builtin.include_tasks: upgrade.yml
+  when: _glpi_dir_check.stat.exists and _glpi_install_check.rc == 0 and _glpi_download is changed
