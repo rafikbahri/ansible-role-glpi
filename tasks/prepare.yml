@@ -7,6 +7,7 @@
     remote_src: true
     owner: root
     group: root
+  when: not glpi_package.stat.exists
 
 - name: Create downstream.php
   become: true
@@ -91,21 +92,6 @@
     - { regexp: '^session.cookie_httponly.*', line: 'session.cookie_httponly = {{ glpi_session_cookie_httponly }}' }
     - { regexp: '^;?date.timezone.*', line: 'date.timezone = {{ glpi_timezone }}' }
   notify: Restart webserver
-
-- name: Install using CLI
-  become: true
-  ansible.builtin.command: |
-    su www-data -s /bin/bash -c "bin/console db:install --no-interaction \
-      --db-host={{ glpi_db_host }} \
-      --db-name={{ glpi_db_name }} \
-      --db-user={{ glpi_db_user }} \
-      --db-password={{ glpi_db_password }} \
-      --db-port={{ glpi_db_port }} \
-      --reconfigure \
-      --no-telemetry"
-  args:
-    chdir: /var/www/html/glpi
-  changed_when: false
 
 - name: Flush handlers
   ansible.builtin.meta: flush_handlers

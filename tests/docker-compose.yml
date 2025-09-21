@@ -6,4 +6,5 @@ services:
     container_name: glpi-test
     ports:
       - "2222:22"
+      - "8080:80"
     restart: unless-stopped

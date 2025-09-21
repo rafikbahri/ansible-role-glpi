@@ -20,6 +20,6 @@ COPY mysql-init.sql /docker-entrypoint-initdb.d/
 RUN service mysql start && \
     mysql < /docker-entrypoint-initdb.d/mysql-init.sql
 
-EXPOSE 22 3306
+EXPOSE 22 8080
 
 CMD ["/bin/bash", "-c", "service mysql start && /usr/sbin/sshd -D"]

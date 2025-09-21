@@ -1,0 +1,96 @@
+---
+- name: Backup GLPI installation
+  become: true
+  ansible.builtin.copy:
+    src: /var/www/html/glpi
+    dest: /tmp/glpi.bak
+    remote_src: true
+    owner: www-data
+    group: www-data
+    mode: '0755'
+
+- name: Remove GLPI installation directory
+  become: true
+  ansible.builtin.file:
+    path: /var/www/html/glpi
+    state: absent
+
+- name: Extract archive to web directory
+  become: true
+  ansible.builtin.unarchive:
+    src: "/tmp/glpi-{{ glpi_version }}.tgz"
+    dest: /var/www/html
+    remote_src: true
+    owner: root
+    group: root
+
+- name: Copy files directory from backup to new version
+  become: true
+  ansible.builtin.copy:
+    remote_src: true
+    src: "/tmp/glpi.bak/glpi/files/"
+    dest: "/var/www/html/glpi/files"
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: Copy config directory from backup to new version
+  become: true
+  ansible.builtin.copy:
+    remote_src: true
+    src: "/tmp/glpi.bak/glpi/config/"
+    dest: "/var/www/html/glpi/config"
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: Create downstream.php
+  become: true
+  ansible.builtin.template:
+    src: downstream.php.j2
+    dest: /var/www/html/glpi/inc/downstream.php
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Create local_define.php
+  become: true
+  ansible.builtin.template:
+    src: local_define.php.j2
+    dest: /var/www/html/glpi/config/local_define.php
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Copy marketplace directory from backup to new version
+  become: true
+  ansible.builtin.copy:
+    remote_src: true
+    src: "/tmp/glpi.bak/glpi/marketplace/"
+    dest: "/var/www/html/glpi/marketplace"
+    owner: www-data
+    group: www-data
+    mode: '0755'
+
+- name: Move files to configured directories
+  become: true
+  ansible.builtin.copy:
+    remote_src: true
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: www-data
+    group: www-data
+    mode: '0755'
+  loop:
+    - { src: '/var/www/html/glpi/config/', dest: '/etc/glpi' }
+    - { src: '/var/www/html/glpi/files/', dest: '/var/lib/glpi' }
+    - { src: '/var/lib/glpi/_log/', dest: '/var/log/glpi' }
+
+- name: Upgrade using CLI
+  become: true
+  ansible.builtin.command: |
+    su www-data -s /bin/bash -c "bin/console db:update --no-interaction \
+      --no-telemetry"
+  args:
+    chdir: /var/www/html/glpi
+  changed_when: false
