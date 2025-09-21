@@ -9,5 +9,5 @@
 - name: Configure server
   ansible.builtin.include_tasks: server.yml
 
-- name: Install
-  ansible.builtin.include_tasks: install.yml
+- name: Check installation
+  ansible.builtin.include_tasks: check.yml

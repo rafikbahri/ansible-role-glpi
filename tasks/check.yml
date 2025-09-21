@@ -1,0 +1,19 @@
+---
+- name: Health check - System status
+  become: true
+  ansible.builtin.command: |
+    su www-data -s /bin/bash -c "bin/console system:status --format json"
+  args:
+    chdir: /var/www/html/glpi
+  changed_when: false
+
+- name: Health check - HTTP liveness
+  ansible.builtin.uri:
+    url: "{{ glpi_url }}"
+    return_content: true
+    status_code: 200
+    validate_certs: false
+  register: _glpi_post_install_check
+  retries: 5
+  delay: 10
+  until: _glpi_post_install_check.status == 200 and "Login" in _glpi_post_install_check.content
