@@ -17,3 +17,13 @@
   retries: 5
   delay: 10
   until: _glpi_post_install_check.status == 200 and "Login" in _glpi_post_install_check.content
+
+- name: Health check - Version
+  become: true
+  ansible.builtin.command: |
+    su www-data -s /bin/bash -c "bin/console --version"
+  args:
+    chdir: /var/www/html/glpi
+  register: _glpi_version_check
+  changed_when: false
+  failed_when: glpi_version not in _glpi_version_check.stdout
